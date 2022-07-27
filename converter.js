@@ -57,10 +57,15 @@ class Converter{
 			for(let name of measurementUnitNames){
 				measurementUnits[name] *= convertedValue;
 				//convert each measurement unit to standard form (mantissa * 10 ^ n)
-				measurementUnits[name] = this.toStandardForm({
-					number: measurementUnits[name],
-					precision: props.precision
-				});
+				if(props.standardForm){
+					measurementUnits[name] = this.toStandardForm({
+						number: measurementUnits[name],
+						precision: props.precision
+					});
+				}
+				else if(props.precision > 0){
+					measurementUnits[name] = measurementUnits[name].toFixed(props.precision);
+				}
 			}
 
 			if(props.to in measurementUnits){
@@ -154,7 +159,7 @@ class Converter{
 const areaConverter = new Converter({type: "area"});
 //const lengthConverter = new Converter({type: "length"});
 
-const cnv20ft2 = areaConverter.convert({ value: 20, from: "ft2", precision: 2});
+const cnv20ft2 = areaConverter.convert({ value: 1, from: "rod2", to: "m2", standardForm: true, precision: 4});
 
 console.log(cnv20ft2);
 console.log(cnv20ft2.toString());
