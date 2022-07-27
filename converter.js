@@ -1,6 +1,15 @@
 String.prototype.removeAt = function(index){
 	return this.slice(0, index) + this.slice(index + 1);
 }
+function roundTo(number, precision){
+	//round number and remain only integer part
+	if(precision <= 0){
+		return Math.round(number);
+	}
+	//round number due to precision value
+	const precisionCoefitient = 10 ** precision;
+	return (Math.round(number * precisionCoefitient)) / precisionCoefitient;
+}
 
 class Converter{
 	static measurementUnitGroups = {
@@ -64,7 +73,7 @@ class Converter{
 					});
 				}
 				else if(props.precision > 0){
-					measurementUnits[name] = measurementUnits[name].toFixed(props.precision);
+					measurementUnits[name] = roundTo(measurementUnits[name], props.precision);
 				}
 			}
 
@@ -95,8 +104,6 @@ class Converter{
 		//position of floating dot in number
 		const dotPosition = isNumberBetween0And1 ? 1 : ((digits.indexOf(".") != -1) ? digits.indexOf(".") : digits.length);
 
-		let mantissa = null;
-
 		//if number is written in exponential form, we simply replace exp part, for example 1.05e-6 becomes 1.05 * 10 ^ -6
 		if(digits.includes("e") || digits.includes("E")){
 			//find position of exponent symbol (e or E)
@@ -107,7 +114,7 @@ class Converter{
 			//mantissa with dot
 			const rawMantissa = digits.slice(0, exponentPosition);
 			//mantissa without dot
-			mantissa = rawMantissa.removeAt(dotPosition);
+			result.mantissaDigits = rawMantissa.removeAt(dotPosition);
 			result.shift = parseInt(digits.slice(exponentPosition + 1));
 		}
 		else if(isNumberBetween0And1){
@@ -117,40 +124,31 @@ class Converter{
 				return ((digit !== "0") && (currentPosition > dotPosition));
 			});
 			//slice all zeros after dot and before first not zero symbol
-			mantissa = digits.slice(notZeroInAfterDotPartPosition);
+			result.mantissaDigits = digits.slice(notZeroInAfterDotPartPosition);
 			result.shift = dotPosition - notZeroInAfterDotPartPosition;
 		}
 		else{
 			//remove dot from digits variable using slice()
-			mantissa = digits.removeAt(dotPosition);
+			result.mantissaDigits = digits.removeAt(dotPosition);
 			result.shift = dotPosition - 1;
 		}
 		return {
 			...result,
 			initial: props.number,
-			mantissa: {
-				integer: mantissa[0],
-				decimal: mantissa.slice(1)
+			getNumericMantissa: function(){
+				return parseFloat(this.mantissaDigits[0] + "." + this.mantissaDigits.slice(1));
 			},
 			toString: function(){
-				//uses to store default mantissa or mantissa with precision
-				let rawDecimalMantissa = this.mantissa.decimal;
-				if(props.precision){
-					//leave props.precision digits in mantissa decimal part
-					let precision = rawDecimalMantissa.slice(0, props.precision);
-					//if user precision is bigger than calculated mantissa, we will rest with zeros
-					if(precision.length < props.precision){
-						precision += "0".repeat(props.precision - precision.length);
-					}
-					//now mantissa is with precision
-					rawDecimalMantissa = precision;
+				//get sign of mantissa, using initial number
+				const sign = Math.sign(this.initial);
+				let mantissa = this.getNumericMantissa();
+				//if precision is bigger of equal 0, we round it due to precision
+				if(props.precision >= 0){
+					mantissa = roundTo(mantissa, props.precision);
 				}
-				const integerMantissa = Math.sign(this.initial) * this.mantissa.integer;
-				//if decimal part is all zeros (for example "000000000"), we do not show decimalPart
-				const decimalMantissa = parseInt(this.mantissa.decimal) ? `.${rawDecimalMantissa}` : ``;
 				//if shift is 0, we do not show it, because 10 ^ 0 = 1
 				const shift = this.shift ? (` * 10 ^ ${this.shift}`) : ``;
-				return integerMantissa + decimalMantissa + shift;
+				return (sign * mantissa) + shift;
 			},
 		};
 	}
@@ -159,7 +157,7 @@ class Converter{
 const areaConverter = new Converter({type: "area"});
 //const lengthConverter = new Converter({type: "length"});
 
-const cnv20ft2 = areaConverter.convert({ value: 1, from: "rod2", to: "m2", standardForm: true, precision: 4});
+const cnv20ft2 = areaConverter.convert({ value: 100, standardForm: true, from: "km2"});
 
 console.log(cnv20ft2);
 console.log(cnv20ft2.toString());
