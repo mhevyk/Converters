@@ -1,6 +1,13 @@
+String.prototype.removeAt = function(index){
+	return this.slice(0, index) + this.slice(index + 1);
+}
+
 class Converter{
 	static measurementUnitGroups = {
 		area:{
+			//metrics
+			nm2: 1e18,
+			mcm2: 1e12,
 			mm2: 1000000,
 			sm2: 10000,
 			dm2: 100,
@@ -8,11 +15,16 @@ class Converter{
 			a: 0.01,
 			ha: 0.0001,
 			km2: 0.000001,
-			in2: 1550,
-			ft2: 10.76391,
-			yd2: 1.195990,
-			ac: 0.0002471055,
+			//british and american
+			township: 1.072506e-8,
 			mi2: 3.861022e-7,
+			homestead: 0.000001544409,
+			acre: 0.0002471055,
+			rod: 0.0009884220,
+			rod2: 0.03953687,
+			yd2: 1.195990,
+			ft2: 10.76391,
+			in2: 1550
 		},
 		length:{
 			
@@ -60,7 +72,7 @@ class Converter{
 					toString: function(){
 						const result = [];
 						for(let name of measurementUnitNames){
-							result.push(measurementUnits[name].toString());
+							result.push(name + ": " + measurementUnits[name].toString());
 						}
 						return result;
 					}
@@ -80,7 +92,20 @@ class Converter{
 
 		let mantissa = null;
 
-		if(isNumberBetween0And1){
+		//if number is written in exponential form, we simply replace exp part, for example 1.05e-6 becomes 1.05 * 10 ^ -6
+		if(digits.includes("e") || digits.includes("E")){
+			//find position of exponent symbol (e or E)
+			let exponentPosition = digits.indexOf("e");
+			if(exponentPosition === -1){
+				exponentPosition = digits.indexOf("E");
+			}
+			//mantissa with dot
+			const rawMantissa = digits.slice(0, exponentPosition);
+			//mantissa without dot
+			mantissa = rawMantissa.removeAt(dotPosition);
+			result.shift = parseInt(digits.slice(exponentPosition + 1));
+		}
+		else if(isNumberBetween0And1){
 			//number between 0 and 1 contains a lot of zeros, so we count them and find first not zero symbol after dot
 			//it will become our mantissa
 			const notZeroInAfterDotPartPosition = digits.split("").findIndex((digit, currentPosition) => {
@@ -92,7 +117,7 @@ class Converter{
 		}
 		else{
 			//remove dot from digits variable using slice()
-			mantissa = digits.slice(0, dotPosition) + digits.slice(dotPosition + 1);
+			mantissa = digits.removeAt(dotPosition);
 			result.shift = dotPosition - 1;
 		}
 		return {
@@ -129,12 +154,7 @@ class Converter{
 const areaConverter = new Converter({type: "area"});
 //const lengthConverter = new Converter({type: "length"});
 
-const cnv20ft2tokm2 = areaConverter.convert({ value: 20, from: "ft2", to: "km2", precision: 2});
-
 const cnv20ft2 = areaConverter.convert({ value: 20, from: "ft2", precision: 2});
-
-console.log(cnv20ft2tokm2);
-console.log(cnv20ft2tokm2.toString());
 
 console.log(cnv20ft2);
 console.log(cnv20ft2.toString());
