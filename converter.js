@@ -4,7 +4,7 @@ class Converter{
 			mm2: 1000000,
 			sm2: 10000,
 			dm2: 100,
-			m2: 1,
+			m2: 1, //value by default
 			a: 0.01,
 			ha: 0.0001,
 			km2: 0.000001,
@@ -13,6 +13,9 @@ class Converter{
 			yd2: 1.195990,
 			ac: 0.0002471055,
 			mi2: 3.861022e-7,
+		},
+		length:{
+			
 		}
 	};
 	constructor(props){
@@ -37,10 +40,32 @@ class Converter{
 			//If we want to have (props.value) km2, we multiply it by reduceFraction
 			const convertedValue = props.value * reduceFraction;
 
-			for(let unitName of Object.keys(measurementUnits)){
-				measurementUnits[unitName] *= convertedValue;
+			const measurementUnitNames = Object.keys(measurementUnits);
+
+			for(let name of measurementUnitNames){
+				measurementUnits[name] *= convertedValue;
+				//convert each measurement unit to standard form (mantissa * 10 ^ n)
+				measurementUnits[name] = this.toStandardForm({
+					number: measurementUnits[name],
+					precision: props.precision
+				});
 			}
-			return (props.to in measurementUnits) ? measurementUnits[props.to] : measurementUnits;
+
+			if(props.to in measurementUnits){
+				return measurementUnits[props.to];
+			}
+			else{
+				return {
+					...measurementUnits,
+					toString: function(){
+						const result = [];
+						for(let name of measurementUnitNames){
+							result.push(measurementUnits[name].toString());
+						}
+						return result;
+					}
+				};
+			}
 		}
 	}
 	toStandardForm(props){
@@ -55,7 +80,6 @@ class Converter{
 
 		let mantissa = null;
 
-		console.log(`start: ${props.number}`)
 		if(isNumberBetween0And1){
 			//number between 0 and 1 contains a lot of zeros, so we count them and find first not zero symbol after dot
 			//it will become our mantissa
@@ -79,31 +103,38 @@ class Converter{
 				decimal: mantissa.slice(1)
 			},
 			toString: function(){
-				let decimalWithPrecision = this.mantissa.decimal;
+				//uses to store default mantissa or mantissa with precision
+				let rawDecimalMantissa = this.mantissa.decimal;
 				if(props.precision){
-					let precision = this.mantissa.decimal.slice(0, props.precision);
+					//leave props.precision digits in mantissa decimal part
+					let precision = rawDecimalMantissa.slice(0, props.precision);
+					//if user precision is bigger than calculated mantissa, we will rest with zeros
 					if(precision.length < props.precision){
 						precision += "0".repeat(props.precision - precision.length);
 					}
-					decimalWithPrecision = precision;
+					//now mantissa is with precision
+					rawDecimalMantissa = precision;
 				}
-				const decimalPart = parseInt(this.mantissa.decimal) ? `.${decimalWithPrecision}` : ``;
-				const shiftPart = this.shift ? (`* 10 ^ ${this.shift}`) : ``;
-				return `${Math.sign(this.initial) * this.mantissa.integer}${decimalPart} ${shiftPart}`;
+				const integerMantissa = Math.sign(this.initial) * this.mantissa.integer;
+				//if decimal part is all zeros (for example "000000000"), we do not show decimalPart
+				const decimalMantissa = parseInt(this.mantissa.decimal) ? `.${rawDecimalMantissa}` : ``;
+				//if shift is 0, we do not show it, because 10 ^ 0 = 1
+				const shift = this.shift ? (` * 10 ^ ${this.shift}`) : ``;
+				return integerMantissa + decimalMantissa + shift;
 			},
 		};
 	}
 }
 
-const areaConverter = new Converter({
-	type: "area",
-});
+const areaConverter = new Converter({type: "area"});
+//const lengthConverter = new Converter({type: "length"});
 
-const cnv20ft2tokm2 = areaConverter.convert({ value: 20, from: "ft2", to: "km2"});
+const cnv20ft2tokm2 = areaConverter.convert({ value: 20, from: "ft2", to: "km2", precision: 2});
 
-let standardForm = areaConverter.toStandardForm({
-	number: cnv20ft2tokm2,
-	precision: 2
-});
-console.log(standardForm);
-console.log(standardForm.toString());
+const cnv20ft2 = areaConverter.convert({ value: 20, from: "ft2", precision: 2});
+
+console.log(cnv20ft2tokm2);
+console.log(cnv20ft2tokm2.toString());
+
+console.log(cnv20ft2);
+console.log(cnv20ft2.toString());
