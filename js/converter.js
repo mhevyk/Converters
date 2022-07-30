@@ -129,3 +129,50 @@ class Converter{
 			: tableRow(data.names.short || "Некоректний ввід!", parseValue(data));
 	}
 }
+
+function convertHandler(event){
+	event.preventDefault();
+
+	const type = event.target.dataset.type;
+
+	const value = parseFloat(document.querySelector(`#${type} [data-role='value']`).value);
+
+	const fromSelect = document.querySelector(`#${type} [data-role='from']`);
+	const toSelect = document.querySelector(`#${type} [data-role='to']`);
+
+	const from = fromSelect.options[fromSelect.selectedIndex].value;
+	const to = toSelect.options[toSelect.selectedIndex].value;
+
+	const precision = parseInt(document.querySelector(`#${type} [data-role='precision']`).value);
+
+	const result = document.querySelector(`#${type} [data-role='result']`);
+
+	const converter = new Converter({type});
+
+	const converted = converter.convert({value, from, to});
+
+	console.log(converted)
+
+	result.innerHTML = converter.toHtml({converted, precision});
+}
+
+const valueInputs = document.querySelectorAll("[data-role='value']");
+const fromSelects = document.querySelectorAll("[data-role='from']");
+const toSelects = document.querySelectorAll("[data-role='to']");
+const precisionRanges = document.querySelectorAll("[data-role='precision']");
+
+for(let i = 0; i < valueInputs.length; i++){
+	valueInputs[i].min = -(10 ** 7) + 1;
+	valueInputs[i].max = (10 ** 8) - 1;
+	valueInputs[i].oninput = function(event){
+		const value = event.target.value;
+		const limit = 8;
+		if(value.length > limit){
+			event.target.value = value.slice(0, -1);
+			return false;
+		}
+		convertHandler(event);
+	}
+	fromSelects[i].onchange = convertHandler;
+	toSelects[i].onchange = convertHandler;
+}
