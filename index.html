@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+
+	<link rel="stylesheet" href="styles/main.css">
+	<link rel="stylesheet" href="styles/precisionRange.css">
+
+	<script src="libs/fontawesome.js"></script>
+	<script src="js/tabs.js"></script>
+	<script src="js/converter.js" defer></script>
+	<script src="js/precisionRange.js" defer></script>
+</head>
+<body>
+	<div id="wrapper">
+		<header>
+			<h1>Meter converter</h1>
+		</header>
+		<div id="content">
+			<div id="menu">
+				<div class="menu-header">
+					<i class="fa fa-area-chart" aria-hidden="true"></i> Площа
+				</div>
+				<div class="menu-header">
+					<i class='fas fa-ruler'></i> Довжина
+				</div>
+				<div class="menu-header">
+					<i class="fas fa-thermometer-half"></i> Температура
+				</div>
+				<div class="menu-header">
+					<i class="fa fa-cube" aria-hidden="true"></i> Об'єм
+				</div>
+				<div class="menu-header">
+					<i class='fas fa-weight-hanging'></i> Маса
+				</div>
+				<div class="menu-header">
+					<i class="fa fa-database" aria-hidden="true"></i> Дані
+				</div>
+				<div class="menu-header">
+					<i class="fas fa-tachometer-alt"></i> Швидкість
+				</div>
+				<div class="menu-header">
+					<i class="fa fa-clock-o" aria-hidden="true"></i> Час
+				</div>
+			</div>
+			<main>
+				<div class="menu-content">
+					<div id="area">
+					<input id="area-input" type="number" class="meter-value" value="1" placeholder="Введіть площу..." data-type="area" data-role="value">
+					<select class="area meter-type" data-type="area" data-role="from">
+						<optgroup label="Метричні одиниці">
+							<option value="mcm2">квадратний мікрометр (мкм&sup2)</option>
+							<option value="mm2">квадратний міліметр (мм&sup2)</option>
+							<option value="sm2">квадратний сантиметр (см&sup2)</option>
+							<option value="dm2">квадратний дециметр (дм&sup2)</option>
+							<option value="m2">квадратний метр (м&sup2)</option>
+							<option value="ar">ар/сотка (а)</option>
+							<option value="ha">гектар (га)</option>
+							<option value="km2">квадратний кілометр (км&sup2)</option>
+						</optgroup>
+						<optgroup label="Англо-американські одиниці">
+							<option value="township">тауншип</option>
+							<option value="homestead">хомстед</option>
+							<option value="mi2">квадратна миля (mi&sup2)</option>
+							<option value="acre">акр (ac)</option>
+							<option value="rod">род</option>
+							<option value="rod2">квадратний род</option>
+							<option value="yd2">квадратний ярд (yd&sup2)</option>
+							<option value="ft2">квадратний фут (ft&sup2)</option>
+							<option value="in2">квадратний дюйм (in&sup2)</option>
+						</optgroup>
+					</select>
+					<i class='fas fa-long-arrow-alt-right'></i>
+					<select class="area meter-type" data-type="area" data-role="to">
+						<option value="all" selected>Всі одиниці</option>
+						<optgroup label="Метричні одиниці">
+							<option value="mcm2">квадратний мікрометр (мкм&sup2)</option>
+							<option value="mm2">квадратний міліметр (мм&sup2)</option>
+							<option value="sm2">квадратний сантиметр (см&sup2)</option>
+							<option value="dm2">квадратний дециметр (дм&sup2)</option>
+							<option value="m2">квадратний метр (м&sup2)</option>
+							<option value="ar">ар/сотка (а)</option>
+							<option value="ha">гектар (га)</option>
+							<option value="km2">квадратний кілометр (км&sup2)</option>
+						</optgroup>
+						<optgroup label="Англо-американські одиниці">
+							<option value="township">тауншип</option>
+							<option value="homestead">хомстед</option>
+							<option value="mi2">квадратна миля (mi&sup2)</option>
+							<option value="acre">акр (ac)</option>
+							<option value="rod">род</option>
+							<option value="rod2">квадратний род</option>
+							<option value="yd2">квадратний ярд (yd&sup2)</option>
+							<option value="ft2">квадратний фут (ft&sup2)</option>
+							<option value="in2">квадратний дюйм (in&sup2)</option>
+						</optgroup>
+					</select>
+					<div class="labeled-range-wrap">
+						<div class="labeled-range-value"><span>0</span></div>
+						<input type="range" id="area-precision" step="1" value="2" min="0" max="8" data-type="area" data-role="precision">
+					</div>
+					<table data-type="area" data-role="result"></table>
+					<div class="meter-data">
+						<div class="meter-data-item">
+						</div>
+					</div>
+				</div>	
+				</div>
+				<div class="menu-content">1</div>
+				<div class="menu-content">2</div>
+				<div class="menu-content">3</div>
+				<div class="menu-content">4</div>
+				<div class="menu-content">5</div>
+				<div class="menu-content">6</div>
+				<div class="menu-content">7</div>
+			</main>
+		</div>
+		<footer>
+			<span class="current-year">2022</span> &copy <a href="https://www.instagram.com/m.hevyk/" target="blank">Max Hevyk</a>
+		</footer>
+	</div>
+<script>
+	const menu = new NavigationTabs("content");
+</script>
+</body>
+</html>
