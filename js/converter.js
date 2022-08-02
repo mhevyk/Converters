@@ -1,49 +1,3 @@
-Number.prototype.roundTo = function(precision){
-	if(!Number.isInteger(precision)) return new Error(`Precision '${precision}' in not an integer!`);
-	//round number and remain only integer part
-	if(precision <= 0){
-		return Math.round(this);
-	}
-	//round number due to precision value
-	const precisionCoefitient = Math.pow(10, precision);
-	return (Math.round(this * precisionCoefitient)) / precisionCoefitient;
-}
-Number.prototype.toStandardForm = function(precision){
-	const sign = (Math.sign(this) === -1) ? "-" : "";
-	//get absolute value, because toExponential() method to not work with negative numbers
-	const absoluteNumber = Math.abs(this);
-	//lowerCase, because number can contain 'e' or 'E', it becomes easier to catch needed symbol 'e'
-	const exponentialForm = absoluteNumber.toExponential().toLowerCase();
-
-	//mapping with parseFloat() to convert it to floats
-	let [mantissa, exponent] = exponentialForm.split("e").map(part => parseFloat(part));
-
-	if(Number.isInteger(precision) && precision >= 0){
-		//cut off all numbers after precision + 1, because we round number at (precision) position using (precision+1) position
-		//also we cut off number, because extra digits, like 1.000000000001 can influence rounding
-		const cutMantissa = mantissa.toFixed(precision + 1);
-
-		//get integer part of mantissa and check if it has more than 1 digit
-		const integerMantissa = cutMantissa.slice(0, cutMantissa.indexOf("."));
-		const integerMantissaShift = integerMantissa.length;
-
-		//if integer mantissa has more than one digit, we generate 10 ^ integerMantissaShift - 1 shift to mantissa
-		const extraShift = (integerMantissaShift > 1) ? Math.pow(10, integerMantissaShift - 1) : 1;
-		//shift comma, then round to precision, then fill rest space with zeror
-		mantissa = (parseFloat(cutMantissa) / extraShift).roundTo(precision).toFixed(precision);
-		if(integerMantissaShift > 1){
-			exponent += extraShift - 1;
-		}
-	}
-
-	//if shift is 0, there is no point in showing it, because 10 ^ 0 = 1
-	exponent = exponent ? ` x 10 <sup>${exponent}</sup>` : ``;
-	return sign + mantissa + exponent;
-}
-String.prototype.removeAt = function(index){
-	return this.slice(0, index) + this.slice(index + 1);
-}
-
 class Converter{
 	static measurementUnitGroups = {
 		area: {
@@ -65,7 +19,7 @@ class Converter{
 				{id: "rod2", value: 0.03953687, names: {short: "rod&sup2", full: "квадратний род"}},
 				{id: "yd2", value: 1.195990, names: {short: "yd&sup2", full: "квадратний ярд"}},
 				{id: "ft2", value: 10.76391, names: {short: "ft&sup2", full: "квадратний фут"}},
-				{id: "in2", value: 1550, names: {short: "in2", full: "квадратний дюйм"}}
+				{id: "in2", value: 1550, names: {short: "in&sup2", full: "квадратний дюйм"}}
 			],
 		},
 		length:{
@@ -81,7 +35,7 @@ class Converter{
 	convert(props){
 		console.log(`${props.value} ${props.from} to ${props.to || "all"}`)
  
-		if(!props.value) return new Error("'value' parameter is required!");
+		if(!props.value) return {error: new Error("invalid 'value' parameter!")};
 
 		const getById = function(id){
 			return this.list.find(unit => unit.id === id);
@@ -89,7 +43,7 @@ class Converter{
 
 		//value of unit, that we are converting from
 		const fromUnitOfMeasurement = getById.call(this.dataByType, props.from);
-		if(!fromUnitOfMeasurement) return new Error("valid 'from' parameter is required!");
+		if(!fromUnitOfMeasurement) return {error: new Error("invalid 'from' parameter!")};
 
 		//copy array to avoid it`s change
 		const unitsOfMeasurementList = this.dataByType.list.slice();
@@ -100,79 +54,34 @@ class Converter{
 		* firstly, we get km2 value, it is 0.000001. Then we multiply all by 1/0.000001. km becomes 1 (reset), m2 becomes 1000000.
 		* Now we know, that 1 km2 is 1000000 m2
 		*/
-		const reduceFraction = (1 / fromUnitOfMeasurement.value);
+		let reduceFraction = 1 / fromUnitOfMeasurement.value;
 		//If we want to have (props.value) km2, we multiply it by reduceFraction
 		const convertedValue = props.value * reduceFraction;
 
-		for(let unit of unitsOfMeasurementList){
+		for(const unit of unitsOfMeasurementList){
 			unit.value *= convertedValue;
 		}
+		console.log(unitsOfMeasurementList)
 
 		const toUnitOfMeasurement = getById.call(this.dataByType, props.to);
 
 		return toUnitOfMeasurement || unitsOfMeasurementList;
 	}
 	toHtml(props){
-		//console.log(props.precision);
 		const data = props.converted;
-		const tableRow = (name, value) => {
-			return `<tr>
-				<td>${name}</td>
-				<td>${value}</td>
-			</tr>`;
-		};
 		const parseValue = converted => {
 			return converted.value ? converted.value.toStandardForm(props.precision) : 0;
 		};
+		const tableRow = record => {
+			if(record.error) throw record.error;
+			return `<tr>
+				<td>${record.names.short} (${record.names.full})</td>
+				<td>${parseValue(record)}</td>
+			</tr>`;
+		};
+		
 		return Array.isArray(props.converted)
-			? data.map(a => tableRow(a.names.short || "Некоректний ввід!", parseValue(a))).join("<br>")
-			: tableRow(data.names.short || "Некоректний ввід!", parseValue(data));
+			? data.map(a => tableRow(a)).join("")
+			: tableRow(data);
 	}
-}
-
-function convertHandler(event){
-	event.preventDefault();
-
-	const type = event.target.dataset.type;
-
-	const value = parseFloat(document.querySelector(`#${type} [data-role='value']`).value);
-
-	const fromSelect = document.querySelector(`#${type} [data-role='from']`);
-	const toSelect = document.querySelector(`#${type} [data-role='to']`);
-
-	const from = fromSelect.options[fromSelect.selectedIndex].value;
-	const to = toSelect.options[toSelect.selectedIndex].value;
-
-	const precision = parseInt(document.querySelector(`#${type} [data-role='precision']`).value);
-
-	const result = document.querySelector(`#${type} [data-role='result']`);
-
-	const converter = new Converter({type});
-
-	const converted = converter.convert({value, from, to});
-
-	console.log(converted)
-
-	result.innerHTML = converter.toHtml({converted, precision});
-}
-
-const valueInputs = document.querySelectorAll("[data-role='value']");
-const fromSelects = document.querySelectorAll("[data-role='from']");
-const toSelects = document.querySelectorAll("[data-role='to']");
-const precisionRanges = document.querySelectorAll("[data-role='precision']");
-
-for(let i = 0; i < valueInputs.length; i++){
-	valueInputs[i].min = -(10 ** 7) + 1;
-	valueInputs[i].max = (10 ** 8) - 1;
-	valueInputs[i].oninput = function(event){
-		const value = event.target.value;
-		const limit = 8;
-		if(value.length > limit){
-			event.target.value = value.slice(0, -1);
-			return false;
-		}
-		convertHandler(event);
-	}
-	fromSelects[i].onchange = convertHandler;
-	toSelects[i].onchange = convertHandler;
 }

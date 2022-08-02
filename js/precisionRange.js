@@ -3,12 +3,12 @@ function moveRangeLabel(element){
 	const percentPad = Number((value - min) * 100 / (max - min));
 	const pixelPad = 10 - (percentPad * 0.2);
 	const rangeCaption = element.previousElementSibling;
-	rangeCaption.querySelector("span").textContent = value;
+	rangeCaption.querySelector("span").textContent = ((value < 0) ? "off" : value);
 	rangeCaption.style.left = `calc(${percentPad}% + (${pixelPad}px))`;
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-    const precisionRanges = document.querySelectorAll("input[data-role='precision']");
+    const precisionRanges = document.querySelectorAll(".converter-precision");
     for(let range of precisionRanges){
         moveRangeLabel(range);
         range.onclick = event => moveRangeLabel(event.target);
