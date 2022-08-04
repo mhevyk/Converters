@@ -15,7 +15,7 @@
 	<script src="js/main.js" defer></script>
 	<script src="js/propotypeExtension.js"></script>
 	<script src="js/tabs.js"></script>
-	<script src="js/converter.js"></script>
+	<script src="js/converter.js" defer></script>
 	<script src="js/precisionRange.js"></script>
 </head>
 <body>
@@ -53,88 +53,14 @@
 				</div>
 			</div>
 			<section>
-				<div class="menu-content">
-					<div class="area converter">
-						<div class="converter-title">Convert from:</div>
-						<input type="number" class="converter-value converter-item" value="1" placeholder="Введіть площу" data-type="area"/>
-						<select class="converter-select converter-from converter-item" data-type="area">
-							<option value="" selected disabled>Choose unit of measurement...</option>
-							<optgroup label="Метричні одиниці">
-								<option value="mcm2">квадратний мікрометр (мкм&sup2)</option>
-								<option value="mm2">квадратний міліметр (мм&sup2)</option>
-								<option value="sm2">квадратний сантиметр (см&sup2)</option>
-								<option value="dm2">квадратний дециметр (дм&sup2)</option>
-								<option value="m2">квадратний метр (м&sup2)</option>
-								<option value="ar">ар/сотка (а)</option>
-								<option value="ha">гектар (га)</option>
-								<option value="km2">квадратний кілометр (км&sup2)</option>
-							</optgroup>
-							<optgroup label="Англо-американські одиниці">
-								<option value="township">тауншип</option>
-								<option value="homestead">хомстед</option>
-								<option value="mi2">квадратна миля (mi&sup2)</option>
-								<option value="acre">акр (ac)</option>
-								<option value="rod">род</option>
-								<option value="rod2">квадратний род</option>
-								<option value="yd2">квадратний ярд (yd&sup2)</option>
-								<option value="ft2">квадратний фут (ft&sup2)</option>
-								<option value="in2">квадратний дюйм (in&sup2)</option>
-							</optgroup>
-						</select>
-						<div class="converter-title">to: </div>
-						<select class="converter-select converter-to converter-item" data-type="area">
-							<option value="all" selected>Всі одиниці</option>
-							<optgroup label="Метричні одиниці">
-								<option value="mcm2">квадратний мікрометр (мкм&sup2)</option>
-								<option value="mm2">квадратний міліметр (мм&sup2)</option>
-								<option value="sm2">квадратний сантиметр (см&sup2)</option>
-								<option value="dm2">квадратний дециметр (дм&sup2)</option>
-								<option value="m2">квадратний метр (м&sup2)</option>
-								<option value="ar">ар/сотка (а)</option>
-								<option value="ha">гектар (га)</option>
-								<option value="km2">квадратний кілометр (км&sup2)</option>
-							</optgroup>
-							<optgroup label="Англо-американські одиниці">
-								<option value="township">тауншип</option>
-								<option value="homestead">хомстед</option>
-								<option value="mi2">квадратна миля (mi&sup2)</option>
-								<option value="acre">акр (ac)</option>
-								<option value="rod">род</option>
-								<option value="rod2">квадратний род</option>
-								<option value="yd2">квадратний ярд (yd&sup2)</option>
-								<option value="ft2">квадратний фут (ft&sup2)</option>
-								<option value="in2">квадратний дюйм (in&sup2)</option>
-							</optgroup>
-						</select>
-						<div class="converter-more-header"><a href="#">Click here for more options...</a></div>
-						<div class="converter-more-content slide-container">
-							<div class="labeled-range-wrap">
-								<label class="converter-title">precision</label>
-								<div class="labeled-range-value"><span>0</span></div>
-								<input type="range" class="converter-precision" step="1" value="2" min="-1" max="8" data-type="area"/>
-							</div>
-						</div>
-						<!-- <div class="converter-result-options">
-							<div class="converter-standard-form">
-								<label for="converter-standard-form-flag">standard form</label>
-								<input type="checkbox" id="converter-standard-form-flag" checked/>
-							</div>
-							<div class="labeled-range-wrap">
-								<label>precision</label>
-								<div class="labeled-range-value"><span>0</span></div>
-								<input type="range" class="converter-precision" step="1" value="2" min="-1" max="8" data-type="area"/>
-							</div>
-						</div> -->
-						<table class="converter-result"></table>
-					</div>	
-				</div>
-				<div class="menu-content">1</div>
-				<div class="menu-content">2</div>
-				<div class="menu-content">3</div>
-				<div class="menu-content">4</div>
-				<div class="menu-content">5</div>
-				<div class="menu-content">6</div>
-				<div class="menu-content">7</div>
+				<div id="area-converter" class="menu-content"></div>
+				<div class="menu-content"></div>
+				<div class="menu-content"></div>
+				<div class="menu-content"></div>
+				<div class="menu-content"></div>
+				<div class="menu-content"></div>
+				<div class="menu-content"></div>
+				<div class="menu-content"></div>
 			</section>
 		</main>
 		<footer>

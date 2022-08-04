@@ -13,6 +13,7 @@ input[type=range]::-webkit-slider-runnable-track{
 	border-radius: 25px;
 }
 input[type=range]::-webkit-slider-thumb{
+	cursor: pointer;
 	height: 20px;
 	width: 20px;
 	border-radius: 50%;
@@ -24,15 +25,15 @@ input[type=range]::-webkit-slider-thumb{
 input[type=range]:focus::-webkit-slider-runnable-track{
 	background: var(--primary-blue);
 }
-.labeled-range-wrap{
+.range-wrapper{
 	position: relative;
 	user-select: none;
 }
-.labeled-range-value{
+.range-value-caption{
 	position: absolute;
 	top: 0%;
 }
-.labeled-range-value span{
+.range-value-caption span{
 	width: 30px;
 	height: 24px;
 	line-height: 24px;
@@ -45,7 +46,7 @@ input[type=range]:focus::-webkit-slider-runnable-track{
 	transform: translate(-50%, 0);
 	border-radius: 6px;
 }
-.labeled-range-value span:before{
+.range-value-caption span:before{
 	content: "";
 	position: absolute;
 	width: 0;

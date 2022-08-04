@@ -1,29 +1,32 @@
 class Converter{
 	static measurementUnitGroups = {
+		getById: function(id){
+			return this.list.find(unit => unit.id === id);
+		},
 		area: {
 			list: [
-				{id: "mcm2", value: 1e12, names: {short: "мкм&sup2", full: "квадратний мікрометр"}},
-				{id: "mm2", value: 1000000, names: {short: "мм&sup2", full: "квадратний міліметр"}},
-				{id: "sm2", value: 10000, names: {short: "см&sup2", full: "квадратний сантиметр"}},
-				{id: "dm2", value: 100, names: {short: "дм&sup2", full: "квадратний дециметр"}},
-				{id: "m2", value: 1, names: {short: "м&sup2", full: "квадратний метр"}},
-				{id: "ar", value: 0.01, names: {short: "а", full: "ар/сотка"}},
-				{id: "ha", value: 0.0001, names: {short: "га", full: "гектар"}},
-				{id: "km2", value: 0.000001, names: {short: "км&sup2", full: "квадратний кілометр"}},
+				{id: "mcm2", value: 1e12, names: {short: "mcm&sup2", full: "квадратний мікрометр"}, group: "Метрична система"},
+				{id: "mm2", value: 1000000, names: {short: "mm&sup2", full: "квадратний міліметр"}, group: "Метрична система"},
+				{id: "sm2", value: 10000, names: {short: "sm&sup2", full: "квадратний сантиметр"}, group: "Метрична система"},
+				{id: "dm2", value: 100, names: {short: "dm&sup2", full: "квадратний дециметр"}, group: "Метрична система"},
+				{id: "m2", value: 1, names: {short: "m&sup2", full: "квадратний метр"}, group: "Метрична система"},
+				{id: "ar", value: 0.01, names: {short: "a", full: "ар/сотка"}, group: "Метрична система"},
+				{id: "ha", value: 0.0001, names: {short: "ha", full: "гектар"}, group: "Метрична система"},
+				{id: "km2", value: 0.000001, names: {short: "km&sup2", full: "квадратний кілометр"}, group: "Метрична система"},
 
-				{id: "township", value: 1.072506e-8, names: {short: "twsp", full: "тауншип"}},
-				{id: "mi2", value: 3.861022e-7, names: {short: "mi&sup2", full: "квадратна миля"}},
-				{id: "homestead", value: 0.000001544409, names: {short: "hmst", full: "хоумстед"}},
-				{id: "acre", value: 0.0002471055, names: {short: "acre", full: "акр"}},
-				{id: "rod", value: 0.0009884220, names: {short: "rod", full: "род"}},
-				{id: "rod2", value: 0.03953687, names: {short: "rod&sup2", full: "квадратний род"}},
-				{id: "yd2", value: 1.195990, names: {short: "yd&sup2", full: "квадратний ярд"}},
-				{id: "ft2", value: 10.76391, names: {short: "ft&sup2", full: "квадратний фут"}},
-				{id: "in2", value: 1550, names: {short: "in&sup2", full: "квадратний дюйм"}}
+				{id: "township", value: 1.072506e-8, names: {short: "twsp", full: "тауншип"}, group: "Англо-американські одиниці"},
+				{id: "mi2", value: 3.861022e-7, names: {short: "mi&sup2", full: "квадратна миля"}, group: "Англо-американські одиниці"},
+				{id: "homestead", value: 0.000001544409, names: {short: "hmst", full: "хоумстед"}, group: "Англо-американські одиниці"},
+				{id: "acre", value: 0.0002471055, names: {short: "acre", full: "акр"}, group: "Англо-американські одиниці"},
+				{id: "rod", value: 0.0009884220, names: {short: "rod", full: "род"}, group: "Англо-американські одиниці"},
+				{id: "rod2", value: 0.03953687, names: {short: "rod&sup2", full: "квадратний род"}, group: "Англо-американські одиниці"},
+				{id: "yd2", value: 1.195990, names: {short: "yd&sup2", full: "квадратний ярд"}, group: "Англо-американські одиниці"},
+				{id: "ft2", value: 10.76391, names: {short: "ft&sup2", full: "квадратний фут"}, group: "Англо-американські одиниці"},
+				{id: "in2", value: 1550, names: {short: "in&sup2", full: "квадратний дюйм"}, group: "Англо-американські одиниці"}
 			],
 		},
 		length:{
-			
+			list: []
 		}
 	};
 	constructor(props){
@@ -31,19 +34,131 @@ class Converter{
 		this.type = props.type || "area";
 		//object, that contains all units of measurement from current group (for example if type is 'area', it contains 'm2', 'mm2' etc.)
 		this.dataByType = Converter.measurementUnitGroups[this.type];
+		this.appendTo(props.selector || "body");
+	}
+	appendTo(selector){
+		//avoid multiple appending one converter to page
+		if(this.appended) return;
+		this.appended = true;
+
+		//create wrapper of converter
+		const wrapper = createContainerWithClasses("div", this.type, "converter");
+
+		//input for typing value
+		const valueInput = createConverterValueInput(this.type);
+
+		//title and select for "from" unit of measurement
+		const fromTitle = createConverterTitle(`Convert ${this.type} from:`);
+		const fromSelect = createConverterSelect({
+			role: "from",
+			type: this.type,
+			defaultOptionText: "Choose unit of measurement...",
+			disableDefaultOption: true
+		});
+
+		//title and select for "to" unit of measurement
+		const toTitle = createConverterTitle("to:");
+		const toSelect = createConverterSelect({
+			role: "to",
+			type: this.type,
+			defaultOptionText: "All measurement units",
+		});
+
+		//fill selects with same options using this.dataByType.list objects list
+		const groups = getUniqueElements(this.dataByType.list.map(a => a.group));
+		const optgroups = [];
+		for(let group of groups){
+			const groupContent = this.dataByType.list.filter(a => a.group === group);
+			optgroups.push(
+				`<optgroup label="${group}">
+					${groupContent.map(a => `<option value="${a.id}">${a.names.full} (${a.names.short})</option>`).join("")}
+				</optgroup>`
+			)
+		}
+		fromSelect.innerHTML += optgroups.join("");
+		toSelect.innerHTML += optgroups.join("");
+
+		//link, that opens more options
+		const toggleLink = createContainerWithClasses("div", "converter-more-header");
+		toggleLink.innerHTML = `<span>Click here for more options...</span>`;
+		toggleLink.querySelector("span").onclick = event => $(event.target.parentNode.nextElementSibling).slideToggle();
+
+		const precisionRange = createConverterPrecisionRange(this.type);
+
+		//contents, that toggles due to toggle link
+		const toggleContent = createContainerWithClasses("div", "converter-more-content");
+		toggleContent.appendChild(precisionRange);
+
+		const result = createContainerWithClasses("div", "converter-result");
+
+		//reads value from input, from and to units of measurements from selects and precision from range and passes it to converter, that prints result of error
+		const startConverting = () => {
+			try{
+				const value = parseFloat(valueInput.value);
+				if(!value){
+					throw new Error(`Invalid input! Type ${this.type} value again!`);
+				}
+				const from = getSelectedOption(fromSelect);
+				if(!from){
+					throw new Error("You forgot to choose <span class='primary-text'>from</span> unit of measurement!");
+				}
+
+				const to = getSelectedOption(toSelect);
+
+				const precision = parseInt(precisionRange.querySelector("input").value);
+				
+				//list of objects, that contain converted values
+				const converted = this.convert({value, from, to});
+				//get short name of selected "from" value
+				const fromShortName = this.getById(from).names.short;
+				//list of options containing all converted units of measurement
+				const liList = this.toHtml({converted, precision});
+
+				const resultHeader = `<div class="result-header">${value} ${fromShortName} is:</div>`;
+				const resultContent = `<ul class="result-list">${liList}</ul>`;
+				result.innerHTML = resultHeader + resultContent;
+			}
+			catch(error){
+				result.innerHTML = error.message;
+			}
+		};
+
+		//limit length of field
+		valueInput.oninput = event => {
+			const value = event.target.value;
+			if(value.length > 9){
+				event.target.value = value.slice(0, -1);
+			}
+			else startConverting();
+		};
+		fromSelect.onchange = startConverting;
+		toSelect.onchange = startConverting;
+		//moving range caption when changing its status
+		precisionRange.oninput = event => {
+			moveConverterRangeCaption(event.target.parentNode);
+			startConverting();
+		};
+		precisionRange.onclick = event => moveConverterRangeCaption(event.target.parentNode);
+
+		//appending elements to wrapper and then appending to block with parameter selector:
+		wrapper.appendChild(fromTitle);
+		wrapper.appendChild(valueInput);
+		wrapper.appendChild(fromSelect);
+		wrapper.appendChild(toTitle);
+		wrapper.appendChild(toSelect);
+		wrapper.appendChild(toggleLink);
+		wrapper.appendChild(toggleContent);
+		wrapper.appendChild(result);
+		document.querySelector(selector).appendChild(wrapper);
+	}
+	getById(id){
+		return Converter.measurementUnitGroups.getById.call(this.dataByType, id);
 	}
 	convert(props){
-		console.log(`${props.value} ${props.from} to ${props.to || "all"}`)
- 
-		if(!props.value) return {error: new Error("invalid 'value' parameter!")};
-
-		const getById = function(id){
-			return this.list.find(unit => unit.id === id);
-		}
+		console.log(`${props.value} ${props.from} to ${props.to || "all"}`);
 
 		//value of unit, that we are converting from
-		const fromUnitOfMeasurement = getById.call(this.dataByType, props.from);
-		if(!fromUnitOfMeasurement) return {error: new Error("invalid 'from' parameter!")};
+		const fromUnitOfMeasurement = this.getById(props.from);
 
 		//copy array to avoid it`s change
 		const unitsOfMeasurementList = this.dataByType.list.slice();
@@ -61,23 +176,18 @@ class Converter{
 		for(const unit of unitsOfMeasurementList){
 			unit.value *= convertedValue;
 		}
-		console.log(unitsOfMeasurementList)
 
-		const toUnitOfMeasurement = getById.call(this.dataByType, props.to);
+		const toUnitOfMeasurement = this.getById(props.to);
 
 		return toUnitOfMeasurement || unitsOfMeasurementList;
 	}
 	toHtml(props){
+		console.log(props.converted)
 		const data = props.converted;
-		const parseValue = converted => {
-			return converted.value ? converted.value.toStandardForm(props.precision) : 0;
-		};
+		const toStandardForm = converted => converted.value.toStandardForm(props.precision);
 		const tableRow = record => {
 			if(record.error) throw record.error;
-			return `<tr>
-				<td>${record.names.short} (${record.names.full})</td>
-				<td>${parseValue(record)}</td>
-			</tr>`;
+			return `<li>${toStandardForm(record)}<span class="primary-text">${record.names.short}</span></li>`;
 		};
 		
 		return Array.isArray(props.converted)
@@ -85,3 +195,8 @@ class Converter{
 			: tableRow(data);
 	}
 }
+
+const areaConverter = new Converter({
+	type: "area",
+	selector: "#area-converter"
+});
