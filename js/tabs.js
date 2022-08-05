@@ -1,7 +1,11 @@
 class Tabs{
 	constructor(id){
 		this.link = document.querySelector(`#${id}`);
-		this.link.classList.add("tabs");
+
+		this.headers = this.link.querySelectorAll(`.menu-header`);
+		this.contents = this.link.querySelectorAll(`.menu-content`);
+
+		this.init();
 	}
 	init(){
 		//create tab-index attribute
@@ -21,17 +25,6 @@ class Tabs{
 				}
 			};
 		}
-	}
-}
-class NavigationTabs extends Tabs{
-	constructor(id){
-		super(id);
-		this.headers = this.link.querySelectorAll(`.menu-header`);
-		this.contents = this.link.querySelectorAll(`.menu-content`);
-
-		this.link.classList.add("tabs-navigation");
-
-		super.init();
 	}
 	setActive(index){
 		for(let header of this.headers){
