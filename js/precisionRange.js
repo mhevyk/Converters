@@ -1,4 +1,4 @@
-function moveConverterRangeCaption(rangeWrapper){
+const moveConverterRangeCaption = rangeWrapper => {
 	const range = rangeWrapper.querySelector("input");
 	const {min, max, value} = range;
 	const percentPad = Number((value - min) * 100 / (max - min));
@@ -7,7 +7,7 @@ function moveConverterRangeCaption(rangeWrapper){
 	rangeCaption.querySelector("span").textContent = value;
 	rangeCaption.style.left = `calc(${percentPad}% + (${pixelPad}px))`;
 };
-function createConverterPrecisionRange(type){
+const createConverterPrecisionRange = type => {
 	const wrapper = createContainerWithClasses("div", "range-wrapper");
 	const precisionTitle = createConverterTitle("precision:");
 	const rangeCaption = createContainerWithClasses("div", "range-value-caption");
