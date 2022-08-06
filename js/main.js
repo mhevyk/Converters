@@ -32,12 +32,22 @@ const createToConverterSelect = type => createConverterSelect({
 	defaultOptionText: "All measurement units",
 });
 
+const createOptionsList = array => {
+	return array.map(record => {
+		const shortName = record.names.short ? `(${record.names.short})` : ``;
+		return `<option value="${record.id}">${record.names.full} ${shortName}</option>`;
+	});
+};
+
 const createOptgroups = list => {
-	const groups = list.map(record => record.group).getUniqueElements();
+	const groups = list.map(record => record.group).getUniqueElements().filter(Boolean);
+	if(!groups.length){
+		return createOptionsList(list);
+	}
+	console.log(groups)
 	const optgroups = groups.map(group => {
 		const groupContent = list.filter(record => record.group === group);
-		const optionsList = groupContent.map(record => `<option value="${record.id}">${record.names.full} (${record.names.short})</option>`);
-		return `<optgroup label="${group}">${optionsList.join("")}</optgroup>`;
+		return `<optgroup label="${group}">${createOptionsList(groupContent).join("")}</optgroup>`;
 	});
 	return optgroups.join("");
 };

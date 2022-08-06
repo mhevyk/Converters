@@ -3,6 +3,16 @@
 	display: flex;
 	flex-direction: column;
 }
+.converter-main-title{
+	text-transform: uppercase;
+	margin-top: 10px;
+	margin-bottom: 20px;
+	padding-bottom: 8px;
+	border-bottom: 2px solid var(--primary-blue);
+}
+.converter-main-title .fa, .converter-main-title .fas{
+	margin-right: 8px;
+}
 .converter .primary-text{
 	color: var(--secondary-blue);
 }
@@ -75,5 +85,10 @@
 @media only screen and (max-width: 992px){
 	.converter{
 		width: 100%;
+	}
+}
+@media only screen and (max-width: 700px){
+	.converter-main-title{
+		font-size: 1rem;
 	}
 }
