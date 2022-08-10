@@ -58,10 +58,15 @@
 	float: right;
 	text-align: right;
 	font-size: 1.2rem;
-	color: var(--secondary-blue);
 	transition: .3s;
 }
-.converter .fa-sync-alt:hover{
+.converter .fa-sync-alt{
+	color: gray;
+}
+.converter .fa-sync-alt.active{
+	color: var(--secondary-blue);
+}
+.converter .fa-sync-alt.active:hover{
 	cursor: pointer;
 	color: var(--primary-blue);
 }

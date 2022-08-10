@@ -36,8 +36,11 @@ class Converter{
 			const fromSelect = createFromConverterSelect(this.type);
 
 			//title and select for "to" unit of measurement
-			const toTitle = createConverterTitle(`to:`, {reverse: true});
+			const toTitle = createConverterTitle(`to:`);
 			const toSelect = createToConverterSelect(this.type);
+
+			const reverseButton = createConverterReverseButton(fromSelect, toSelect);
+			toTitle.appendChild(reverseButton);
 
 			const optgroups = createOptgroups(this.#measurementUnitGroupData.list);
 			fromSelect.innerHTML += optgroups;
@@ -51,7 +54,7 @@ class Converter{
 			const result = createContainerWithClasses("div", "converter-result");
 
 			//reads value from input, from and to units of measurements from selects and precision from range and passes it to converter, that prints result of error
-			const startConverting = converterHandler.bind(this, {valueInput, fromSelect, toSelect, precisionRange, result});
+			const startConverting = converterHandler.bind(this, {valueInput, fromSelect, toSelect, precisionRange, result, reverseButton});
 
 			//limit length of value input field
 			valueInput.oninput = event => {

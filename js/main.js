@@ -11,30 +11,27 @@ function sleep(time){
 const createConverterTitle = (title, props = {}) => {
 	const titleContainer = createContainerWithClasses("div", "converter-title");
 	titleContainer.innerHTML = title;
-	if(props.reverse){
-		const reverseButton = createContainerWithClasses("i", "fas", "fa-sync-alt");
-		reverseButton.onclick = function(event){
-			const converterContainer = event.target.parentNode.parentNode;
-			const fromSelect = converterContainer.querySelector(".converter-from");
-			const toSelect = converterContainer.querySelector(".converter-to");
-			const from = getSelectedOption(fromSelect);
-			const to = getSelectedOption(toSelect);
-			if(!from || !to || (from === to)) return;
-
-			event.target.classList.add("rotate");
-			sleep(500).then(() => {
-				event.target.classList.remove("rotate");
-			})
-
-			fromSelect.querySelector(`[value='${to}']`).selected = true;
-			toSelect.querySelector(`[value='${from}']`).selected = true;
-
-			fromSelect.dispatchEvent(new Event("change"));
-		}
-		titleContainer.appendChild(reverseButton);
-	}
 	return titleContainer;
 };
+const createConverterReverseButton = (fromSelect, toSelect) => {
+	const reverseButton = createContainerWithClasses("i", "fas", "fa-sync-alt");
+	reverseButton.onclick = function(event){
+		const from = getSelectedOption(fromSelect);
+		const to = getSelectedOption(toSelect);
+		if(!from || !to || (from === to)) return;
+
+		event.target.classList.add("rotate");
+		sleep(500).then(() => {
+			event.target.classList.remove("rotate");
+		})
+
+		fromSelect.querySelector(`[value='${to}']`).selected = true;
+		toSelect.querySelector(`[value='${from}']`).selected = true;
+
+		fromSelect.dispatchEvent(new Event("change"));
+	}
+	return reverseButton;
+}
 
 const createConverterSelect = props => {
 	const select = createContainerWithClasses("select", "converter-select", `converter-${props.role}`, "converter-action-item")
@@ -111,7 +108,13 @@ function converterHandler(props){
 		const to = getSelectedOption(props.toSelect);
 
 		const precision = parseInt(props.precisionRange.querySelector("input").value);
-		
+
+		if(to && from !== to){
+			props.reverseButton.classList.add("active");
+		}
+		else{
+			props.reverseButton.classList.remove("active");
+		}
 		//list of objects, that contain converted values
 		const converted = this.convert({value, from, to});
 		console.log(converted)
