@@ -8,10 +8,10 @@
 	margin-top: 10px;
 	margin-bottom: 20px;
 	padding-bottom: 8px;
-	border-bottom: 2px solid var(--primary-blue);
+	border-bottom: 3px solid var(--primary-blue);
 }
 .converter-main-title .fa, .converter-main-title .fas{
-	margin-right: 8px;
+	margin-right: 15px;
 }
 .converter .primary-text{
 	color: var(--secondary-blue);
@@ -53,6 +53,30 @@
 }
 .converter .converter-more-content.active{
     display: block;
+}
+.converter .fa-sync-alt{
+	float: right;
+	text-align: right;
+	font-size: 1.2rem;
+	color: var(--secondary-blue);
+	transition: .3s;
+}
+.converter .fa-sync-alt:hover{
+	cursor: pointer;
+	color: var(--primary-blue);
+}
+@keyframes rotate{
+	from{
+		transform: rotate(0deg);
+	}
+	to{
+		transform: rotate(180deg);
+	}
+}
+.rotate{
+	animation-duration: 0.5s;
+  	animation-name: rotate;
+ 	animation-iteration-count: 1;
 }
 .converter .converter-result-options{
 	margin-top: 15px;
