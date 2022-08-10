@@ -41,5 +41,3 @@ class Tabs{
 		return this.headers[index].classList.contains("active");
 	}
 }
-
-const menu = new Tabs("main-navigation-tabs");
