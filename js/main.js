@@ -5,10 +5,34 @@ const createContainerWithClasses = (tagName, ...classes) => {
 	container.classList.add(...classes);
 	return container;
 };
-
-const createConverterTitle = title => {
+function sleep(time){
+	return new Promise(resolve => setTimeout(() => resolve(), time));
+}
+const createConverterTitle = (title, props = {}) => {
 	const titleContainer = createContainerWithClasses("div", "converter-title");
-	titleContainer.textContent = title;
+	titleContainer.innerHTML = title;
+	if(props.reverse){
+		const reverseButton = createContainerWithClasses("i", "fas", "fa-sync-alt");
+		reverseButton.onclick = function(event){
+			const converterContainer = event.target.parentNode.parentNode;
+			const fromSelect = converterContainer.querySelector(".converter-from");
+			const toSelect = converterContainer.querySelector(".converter-to");
+			const from = getSelectedOption(fromSelect);
+			const to = getSelectedOption(toSelect);
+			if(!from || !to || (from === to)) return;
+
+			event.target.classList.add("rotate");
+			sleep(500).then(() => {
+				event.target.classList.remove("rotate");
+			})
+
+			fromSelect.querySelector(`[value='${to}']`).selected = true;
+			toSelect.querySelector(`[value='${from}']`).selected = true;
+
+			fromSelect.dispatchEvent(new Event("change"));
+		}
+		titleContainer.appendChild(reverseButton);
+	}
 	return titleContainer;
 };
 
@@ -44,7 +68,6 @@ const createOptgroups = list => {
 	if(!groups.length){
 		return createOptionsList(list);
 	}
-	console.log(groups)
 	const optgroups = groups.map(group => {
 		const groupContent = list.filter(record => record.group === group);
 		return `<optgroup label="${group}">${createOptionsList(groupContent).join("")}</optgroup>`;
@@ -91,22 +114,15 @@ function converterHandler(props){
 		
 		//list of objects, that contain converted values
 		const converted = this.convert({value, from, to});
+		console.log(converted)
 		//get short name of selected "from" value
-		const fromShortName = this.getById(from, this.dataByType.list).names.short;
+		const fromNames = converted.fromNames;
 
-		const resultHeader = `<div class="result-header">${value} ${fromShortName} is:</div>`;
-		const resultContent = this.toHtmlList({converted, precision});
+		const resultHeader = `<div class="result-header">${value} ${fromNames.short || fromNames.full} is:</div>`;
+		const resultContent = this.toHtmlList({converted: converted.result, precision});
 		props.result.innerHTML = resultHeader + resultContent;
 	}
 	catch(error){
 		props.result.innerHTML = error.message;
 	}
 };
-
-document.querySelector("#mobile-menu").addEventListener("click", () => {
-	const menu = $("#menu");
-	const mobileMenuArrow = $("#mobile-menu > .fas");
-	menu.slideToggle(500);
-	mobileMenuArrow.toggleClass("fa-angle-down");
-	mobileMenuArrow.toggleClass("fa-angle-up");
-});
