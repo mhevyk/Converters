@@ -12,7 +12,8 @@ class Tabs{
 		for(let index = 0; index < this.headers.length; index++){
 			this.headers[index].setAttribute("tab-index", index);
 		}
-		this.setActive(0);//sets first tab active
+		const savedTabIndex = +localStorage.getItem("converters-active-tab");
+		this.setActive(savedTabIndex || 0);//sets first tab active
 		for(let header of this.headers){
 			header.onclick = event => {
 				let clickedBlock = event.target;
@@ -36,6 +37,8 @@ class Tabs{
 			content.style.display = "none";
 		}
 		this.contents[index].style.display = "block";
+
+		localStorage.setItem("converters-active-tab", index);
 	}
 	isActive(index){
 		return this.headers[index].classList.contains("active");
