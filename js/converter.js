@@ -95,7 +95,7 @@ class Converter{
 		return from.find(record => record.id === id);
 	}
 	convert(props = {}){
-		console.log(`Converting ${props.value} ${props.from} to ${props.to || "all"}`);
+		//console.log(`Converting ${props.value} ${props.from} to ${props.to || "all"}`);
 		if(!props.value) return "Value is invalid!";
 
 		//deep copy of array. This kind of copy makes functions null and they dissapear

@@ -36,7 +36,6 @@ Big.prototype.toStandardForm = function(precision){
 	}
 	//condition to show number without standard form
 	else if(isExponentSmallerThan(MAX_SMALL_EXPONENT) && this.c.length <= MAX_SMALL_EXPONENT){
-		console.log(this.c, stringMantissa);
 		return this.toNumber();
 	}
 	//if mantissa is 1, it means, that numbers contains only ten to power part

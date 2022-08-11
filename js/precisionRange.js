@@ -15,7 +15,7 @@ const createConverterPrecisionRange = type => {
 	const range = createContainerWithClasses("input", "converter-precision");
 	range.type = "range";
 	range.step = 1;
-	range.min = 0;
+	range.min = 1;
 	range.max = 8;
 	range.value = 2;
 	range.dataset.type = type;

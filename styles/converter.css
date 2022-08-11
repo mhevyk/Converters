@@ -61,7 +61,7 @@
 	transition: .3s;
 }
 .converter .fa-sync-alt{
-	color: gray;
+	color: var(--gray3);
 }
 .converter .fa-sync-alt.active{
 	color: var(--secondary-blue);
@@ -79,7 +79,7 @@
 	}
 }
 .rotate{
-	animation-duration: 0.5s;
+	animation-duration: 0.2s;
   	animation-name: rotate;
  	animation-iteration-count: 1;
 }

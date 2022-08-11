@@ -5,9 +5,6 @@ const createContainerWithClasses = (tagName, ...classes) => {
 	container.classList.add(...classes);
 	return container;
 };
-function sleep(time){
-	return new Promise(resolve => setTimeout(() => resolve(), time));
-}
 const createConverterTitle = (title, props = {}) => {
 	const titleContainer = createContainerWithClasses("div", "converter-title");
 	titleContainer.innerHTML = title;
@@ -15,20 +12,22 @@ const createConverterTitle = (title, props = {}) => {
 };
 const createConverterReverseButton = (fromSelect, toSelect) => {
 	const reverseButton = createContainerWithClasses("i", "fas", "fa-sync-alt");
+	reverseButton.title = "Reverse from and to units of measurement";
 	reverseButton.onclick = function(event){
 		const from = getSelectedOption(fromSelect);
 		const to = getSelectedOption(toSelect);
 		if(!from || !to || (from === to)) return;
 
-		event.target.classList.add("rotate");
-		sleep(500).then(() => {
-			event.target.classList.remove("rotate");
-		})
+		const reverseButton = event.target;
 
-		fromSelect.querySelector(`[value='${to}']`).selected = true;
-		toSelect.querySelector(`[value='${from}']`).selected = true;
+		reverseButton.classList.add("rotate");
+		reverseButton.onanimationend = () => {
+			fromSelect.querySelector(`[value='${to}']`).selected = true;
+			toSelect.querySelector(`[value='${from}']`).selected = true;
 
-		fromSelect.dispatchEvent(new Event("change"));
+			fromSelect.dispatchEvent(new Event("change"));
+			reverseButton.classList.remove("rotate");
+		}
 	}
 	return reverseButton;
 }
@@ -117,7 +116,6 @@ function converterHandler(props){
 		}
 		//list of objects, that contain converted values
 		const converted = this.convert({value, from, to});
-		console.log(converted)
 		//get short name of selected "from" value
 		const fromNames = converted.fromNames;
 
