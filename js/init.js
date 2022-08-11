@@ -26,6 +26,14 @@ const dataConverter = new Converter({
     type: "data",
     selector: "#data-converter"
 });
+const speedConverter = new Converter({
+    type: "speed",
+    selector: "#speed-converter"
+});
+const timeConverter = new Converter({
+    type: "time",
+    selector: "#time-converter"
+});
 
 //init mobile menu
 document.querySelector("#mobile-menu").addEventListener("click", () => {
