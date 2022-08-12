@@ -56,15 +56,47 @@ class Converter{
 			//reads value from input, from and to units of measurements from selects and precision from range and passes it to converter, that prints result of error
 			const startConverting = converterHandler.bind(this, {valueInput, fromSelect, toSelect, precisionRange, result, reverseButton});
 
+			valueInput.onpaste = event => {
+				//stop data actually being pasted into input
+				event.stopPropagation();
+    			event.preventDefault();
+
+				const clipboardData = event.clipboardData || window.clipboardData;
+    			const pastedData = clipboardData.getData("Text");
+
+				const numberPattern = /^(-?\d+([\.\,]\d+)?)$/;
+				const isValidDecimal = numberPattern.test(pastedData);
+
+				if(!isValidDecimal){
+					event.target.value = "";
+					result.innerHTML = "You wanted to paste invalid number! Please paste or type again!";
+				}
+				else{
+					event.target.value = pastedData;
+					startConverting();
+				}
+			};
 			//limit length of value input field
 			valueInput.oninput = event => {
-				//max symbols limit
-				const LIMIT = 10;
-				const value = event.target.value;
-				if(value.length >= LIMIT){
-					event.target.value = value.slice(0, -1);
+				const numberPattern = /^(-?\d+(\.\d+)?)$/;
+				const input = event.target;
+				const value = input.value;
+				const isValidDecimal = numberPattern.test(value);
+				console.log(isValidDecimal)
+				if(!isValidDecimal){
+					const isMinusAllowedToType = (value === "-");
+					const isCommaAllowedToType = (
+						!value.slice(0, -1).includes(".")
+						&& value.at(-1) === "."
+						&& value.length !== 1
+						&& value.length !== parseInt(input.getAttribute("maxlength"))
+					);
+					//allows user to type negative number
+					if(isMinusAllowedToType) return;
+					else if(isCommaAllowedToType) return;
+					else event.target.value = event.target.value.slice(0, -1);
 				}
-				else startConverting();
+				startConverting();
 			};
 			fromSelect.onchange = startConverting;
 			toSelect.onchange = startConverting;
