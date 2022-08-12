@@ -73,8 +73,17 @@ const createOptgroups = list => {
 
 const createConverterMoreToggle = toggleContent => {
 	const header = createContainerWithClasses("div", "converter-more-header");
-	header.innerHTML = `<span>Click here for more options...</span>`;
-	header.querySelector("span").onclick = event => $(event.target.parentNode.nextElementSibling).slideToggle();
+	header.innerHTML = `<span class="converter-more-header-clickable">Click here for more options...</span>`;
+	header.querySelector("span").onclick = event => {
+		let header = event.target;
+		/*if we translate with google translator, it adds font tag, that crushes toggle button work
+		* to avoid it we find element with class converter-more-header-clickable
+		*/
+		while(!header.classList.contains("converter-more-header-clickable")){
+			header = header.parentNode;
+		}
+		$(header.parentNode.nextElementSibling).slideToggle();
+	}
 
 	const content = createContainerWithClasses("div", "converter-more-content");
 	content.appendChild(toggleContent);
@@ -87,7 +96,8 @@ const createConverterMoreToggle = toggleContent => {
 const createConverterValueInput = type => {
 	const input = createContainerWithClasses("input", "converter-value", "converter-action-item");
 	input.dataset.type = type;
-	input.type = "number";
+	input.type = "text";
+	input.setAttribute("maxlength", 10);
 	input.value = 1;
 	input.placeholder = `Enter ${type}...`;
 	return input;
