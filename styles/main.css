@@ -20,14 +20,34 @@ body{
 	font-family: Cano;
 	letter-spacing: 0.7px;
 }
+header{
+	padding: 25px 0px;
+	background-color: var(--darkBlack);
+}
+main{
+	flex-grow: 1;
+	display: flex;
+}
+section{
+	background-color: white;
+	flex-grow: 1;
+}
+footer{
+	text-align: center;
+	background-color: var(--darkBlack);
+	padding: 8px 0px;
+	margin: 0;
+	color: white;
+}
+footer a{
+	color: white;
+	font-style: italic;
+	text-decoration: none;
+}
 #wrapper{
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
-}
-header{
-	padding: 25px 0px;
-	background-color: var(--darkBlack);
 }
 .header-title{
 	color: white;
@@ -41,10 +61,6 @@ header{
 	text-align: center;
 	text-transform: uppercase;
 	font-size: 1rem;
-}
-main{
-	flex-grow: 1;
-	display: flex;
 }
 #menu, #menu.active{
 	flex-basis: 220px;
@@ -84,29 +100,8 @@ main{
 .menu-content{
 	padding: 12px 5vw;
 }
-section{
-	background-color: white;
-	flex-grow: 1;
-}
-footer{
-	text-align: center;
-	background-color: var(--darkBlack);
-	padding: 8px 0px;
-	margin: 0;
-	color: white;
-}
 .dev-name{
 	color: var(--primary-blue);
-}
-footer a{
-	color: white;
-	font-style: italic;
-	text-decoration: none;
-}
-input[type='number']::-webkit-inner-spin-button,
-input[type='number']::-webkit-outer-spin-button{ 
-      -webkit-appearance: none !important; 
-      margin: 0; 
 }
 @media only screen and (max-width: 700px){
 	.header-title{
@@ -115,10 +110,7 @@ input[type='number']::-webkit-outer-spin-button{
 	.header-subtitle{
 		font-size: 0.8rem;
 	}
-	#main-navigation-tabs{
-		display: block;
-	}
-	#mobile-menu{
+	#main-navigation-tabs, #mobile-menu{
 		display: block;
 	}
 	#menu.active{

@@ -1,6 +1,7 @@
 input[type=range]{
 	-webkit-appearance: none;
-	margin: 20px 0px;
+	margin-bottom: 20px;
+	margin-top: 40px;
 	width: 100%;
 }
 input[type=range]:focus{
@@ -34,6 +35,7 @@ input[type=range]:focus::-webkit-slider-runnable-track{
 	top: 0%;
 }
 .range-value-caption span{
+	margin-top: 25px;
 	width: 30px;
 	height: 24px;
 	line-height: 24px;

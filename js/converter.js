@@ -56,47 +56,42 @@ class Converter{
 			//reads value from input, from and to units of measurements from selects and precision from range and passes it to converter, that prints result of error
 			const startConverting = converterHandler.bind(this, {valueInput, fromSelect, toSelect, precisionRange, result, reverseButton});
 
-			valueInput.onpaste = event => {
-				//stop data actually being pasted into input
-				event.stopPropagation();
-    			event.preventDefault();
-
-				const clipboardData = event.clipboardData || window.clipboardData;
-    			const pastedData = clipboardData.getData("Text");
-
-				const numberPattern = /^(-?\d+([\.\,]\d+)?)$/;
-				const isValidDecimal = numberPattern.test(pastedData);
-
-				if(!isValidDecimal){
-					event.target.value = "";
-					result.innerHTML = "You wanted to paste invalid number! Please paste or type again!";
-				}
-				else{
-					event.target.value = pastedData;
-					startConverting();
-				}
-			};
+			let prevValue = "";
 			//limit length of value input field
 			valueInput.oninput = event => {
-				const numberPattern = /^(-?\d+(\.\d+)?)$/;
-				const input = event.target;
-				const value = input.value;
-				const isValidDecimal = numberPattern.test(value);
-				console.log(isValidDecimal)
-				if(!isValidDecimal){
-					const isMinusAllowedToType = (value === "-");
-					const isCommaAllowedToType = (
-						!value.slice(0, -1).includes(".")
-						&& value.at(-1) === "."
-						&& value.length !== 1
-						&& value.length !== parseInt(input.getAttribute("maxlength"))
-					);
-					//allows user to type negative number
-					if(isMinusAllowedToType) return;
-					else if(isCommaAllowedToType) return;
-					else event.target.value = event.target.value.slice(0, -1);
+				//use this variable to reduce code
+				let value = event.target.value;
+
+				//firstly remove all, that are not digits, comma, dot and minus, then replace commas with dots
+				value = value
+					.replace(/[^\d.,-]/g, "")
+					.replace(",", ".");
+				
+				switch(value){		
+					//we use these cases to remove typed text completely and to allow user type negative numbers
+					case "":
+					case "-":
+						break;
+					/*
+					* using dot to forbid using remembered value prevValue
+					* minus to avoid double minus 
+					* we only remove typed symbol
+					*/
+					case ".":
+					case "--":
+						value = value.slice(0, -1); break;
+					default:
+						//if Big won`t be created, we use catch to put prevValue into value
+						try{
+							const b = new Big(value);
+							prevValue = value;
+							startConverting();
+						}
+						catch(error){
+							value = prevValue;
+						}
 				}
-				startConverting();
+				event.target.value = value;
 			};
 			fromSelect.onchange = startConverting;
 			toSelect.onchange = startConverting;

@@ -9,7 +9,7 @@ const moveConverterRangeCaption = rangeWrapper => {
 };
 const createConverterPrecisionRange = type => {
 	const wrapper = createContainerWithClasses("div", "range-wrapper");
-	const precisionTitle = createConverterTitle("precision:");
+	const precisionTitle = createConverterTitle("Decimal value precision:");
 	const rangeCaption = createContainerWithClasses("div", "range-value-caption");
 	rangeCaption.innerHTML = "<span>0</span>";
 	const range = createContainerWithClasses("input", "converter-precision");

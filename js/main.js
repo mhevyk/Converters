@@ -12,7 +12,6 @@ const createConverterTitle = (title, props = {}) => {
 };
 const createConverterReverseButton = (fromSelect, toSelect) => {
 	const reverseButton = createContainerWithClasses("i", "fas", "fa-sync-alt");
-	reverseButton.title = "Reverse from and to units of measurement";
 	reverseButton.onclick = function(event){
 		const from = getSelectedOption(fromSelect);
 		const to = getSelectedOption(toSelect);

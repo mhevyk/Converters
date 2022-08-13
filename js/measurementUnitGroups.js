@@ -8,7 +8,7 @@ Converter.measurementUnitGroups = {
             {id: "cm2", value: 1e4, names: {short: "cm&sup2", full: "square centimeter"}, group: "Metric system"},
             {id: "dm2", value: 1e2, names: {short: "dm&sup2", full: "square decimeter"}, group: "Metric system"},
             {id: "m2", value: 1, names: {short: "m&sup2", full: "square meter"}, group: "Metric system"},
-            {id: "ar", value: 1e-2, names: {short: "a", full: "ar/hectare"}, group: "Metric system"},
+            {id: "ar", value: 1e-2, names: {short: "a", full: "ar"}, group: "Metric system"},
             {id: "ha", value: 1e-4, names: {short: "ha", full: "hectare"}, group: "Metric system"},
             {id: "km2", value: 1e-6, names: {short: "km&sup2", full: "square kilometer"}, group: "Metric system"},
 
