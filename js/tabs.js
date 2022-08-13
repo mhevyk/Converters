@@ -26,6 +26,9 @@ class Tabs{
 				}
 				let tab = parseInt(clickedBlock.getAttribute("tab-index"));
 				if(!this.isActive(tab)){
+					if($("#mobile-menu").is(":visible")){
+						$("#menu").slideUp();
+					}
 					this.setActive(tab);
 				}
 			};
